@@ -8,7 +8,7 @@ import {
   AlertCircle,
   Flashlight,
   FlashlightOff,
-  Loader2 // Add this import
+  Loader2, // Add this import
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -80,17 +80,21 @@ const MobileQRScanner: React.FC = () => {
   useEffect(() => {
     const checkExistingPermission = async () => {
       try {
-        const permissions = await navigator.permissions.query({ name: 'camera' as PermissionName });
-        
-        if (permissions.state === 'granted') {
+        const permissions = await navigator.permissions.query({
+          name: "camera" as PermissionName,
+        });
+
+        if (permissions.state === "granted") {
           setHasPermission(true);
           checkFlashlightSupport();
-        } else if (permissions.state === 'denied') {
-          setError('Camera access was previously denied. Please update your browser settings.');
+        } else if (permissions.state === "denied") {
+          setError(
+            "Camera access was previously denied. Please update your browser settings."
+          );
         }
         // If 'prompt', keep hasPermission as null to show request button
       } catch (err) {
-        console.error('Error checking camera permission:', err);
+        console.error("Error checking camera permission:", err);
       }
     };
 
@@ -118,22 +122,22 @@ const MobileQRScanner: React.FC = () => {
 
   const scanQRCode = useCallback(() => {
     if (!webcamRef.current || isScanning) return;
-    
+
     const video = webcamRef.current.video;
     if (!video) return;
-  
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d', { willReadFrequently: true });
+
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d", { willReadFrequently: true });
     if (!context) return;
-  
+
     const width = 640;
     const height = 480;
     canvas.width = width;
     canvas.height = height;
-  
+
     context.drawImage(video, 0, 0, width, height);
     const imageData = context.getImageData(0, 0, width, height);
-    
+
     const code = jsQR(imageData.data, width, height);
     if (code) {
       setIsScanning(true);
@@ -162,11 +166,10 @@ const MobileQRScanner: React.FC = () => {
           <NextImage
             src="/logo.jpg"
             alt="logo"
-            width={100}
-            height={100}
-            className="rounded-full"
+            width={300}
+            height={200}
+            className="rounded-full -translate-x-20"
           />
-          <h1 className="text-foreground text-xl font-bold flex-1">Ansell Notes</h1>
           {/* {hasPermission && (
             <Button
               variant="ghost"

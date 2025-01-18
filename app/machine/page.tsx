@@ -25,11 +25,10 @@ export default async function MachinePage({
             <Image
               src="/logo.jpg"
               alt="logo"
-              width={100}
-              height={100}
-              className="rounded-full"
+              width={300}
+              height={200}
+              className="rounded-full -translate-x-20"
             />
-            <h1 className="text-foreground text-xl font-bold flex-1">Ansell Notes</h1>
             <UserButton />
           </div>
         </div>
