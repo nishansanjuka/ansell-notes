@@ -5,7 +5,6 @@ import Webcam from "react-webcam";
 import jsQR from "jsqr";
 import {
   Camera,
-  XCircle,
   AlertCircle,
   Flashlight,
   FlashlightOff,
@@ -14,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { default as NextImage } from "next/image";
-import { useClerk } from "@clerk/nextjs";
+import { useClerk, UserButton } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
 const MobileQRScanner: React.FC = () => {
@@ -167,8 +166,8 @@ const MobileQRScanner: React.FC = () => {
             height={100}
             className="rounded-full"
           />
-          <h1 className="text-foreground text-xl font-bold">Ansell Notes</h1>
-          {hasPermission && (
+          <h1 className="text-foreground text-xl font-bold flex-1">Ansell Notes</h1>
+          {/* {hasPermission && (
             <Button
               variant="ghost"
               size="icon"
@@ -176,7 +175,8 @@ const MobileQRScanner: React.FC = () => {
             >
               <XCircle className="h-5 w-5" />
             </Button>
-          )}
+          )} */}
+          <UserButton />
         </div>
       </div>
 

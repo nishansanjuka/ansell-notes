@@ -9,12 +9,13 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Clock, CheckCheck } from "lucide-react";
+import { Calendar, MapPin, Clock, CheckCheck, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
 import { AsyncSelect } from "./ui/async-select";
 import { searchSpareParts, SparePart } from "@/lib/actions";
 import { useState } from "react";
 import { ServiceForm } from "./service-form";
+import { useRouter } from "next/navigation";
 
 interface MachineDetailsProps {
   id: number;
@@ -41,6 +42,8 @@ export function MachineDetails({
 }: MachineDetailsProps) {
   const [selectedSparePart, setSelectedSparePart] = useState<string>("");
   const [showServiceForm, setShowServiceForm] = useState(false);
+
+  const { push } = useRouter();
 
   const handleSparePartQuery = async (query?: string) => {
     const res = await searchSpareParts(query);
@@ -165,6 +168,14 @@ export function MachineDetails({
           >
             <CheckCheck className="h-4 w-4" />
             Confirm
+          </Button>
+          <Button
+            variant={"outline"}
+            onClick={() => push("/")}
+            className="w-full gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Scan
           </Button>
         </CardFooter>
       </Card>
