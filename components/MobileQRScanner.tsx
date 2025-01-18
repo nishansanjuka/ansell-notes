@@ -77,15 +77,36 @@ const MobileQRScanner: React.FC = () => {
     }
   }, []);
 
+  // Add initial permission check on mount
+  useEffect(() => {
+    const checkExistingPermission = async () => {
+      try {
+        const permissions = await navigator.permissions.query({ name: 'camera' as PermissionName });
+        
+        if (permissions.state === 'granted') {
+          setHasPermission(true);
+          checkFlashlightSupport();
+        } else if (permissions.state === 'denied') {
+          setError('Camera access was previously denied. Please update your browser settings.');
+        }
+        // If 'prompt', keep hasPermission as null to show request button
+      } catch (err) {
+        console.error('Error checking camera permission:', err);
+      }
+    };
+
+    checkExistingPermission();
+  }, [checkFlashlightSupport]);
+
   const requestCameraPermission = useCallback(async () => {
     setIsLoading(true);
-    await checkFlashlightSupport();
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: "environment" },
       });
       setHasPermission(true);
       setError(null);
+      await checkFlashlightSupport();
       if (stream) stream.getTracks().forEach((track) => track.stop());
     } catch (err: unknown) {
       setError(

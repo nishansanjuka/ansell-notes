@@ -18,6 +18,7 @@ export default async function MachinePage({
   return (
     <div>
       <MachineDetails
+        id={data.id}
         machineid={data.machineid}
         category={data.category}
         brand={data.brand}

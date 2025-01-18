@@ -79,7 +79,6 @@ export function AsyncSelect<T>({
   value,
   onChange,
   disabled = false,
-  width = "200px",
   className,
   triggerClassName,
   noResultsMessage,
@@ -160,16 +159,16 @@ export function AsyncSelect<T>({
           className={cn(
             "justify-between",
             disabled && "opacity-50 cursor-not-allowed",
-            triggerClassName
+            triggerClassName,
           )}
-          style={{ width: width }}
+          // style={{ width: width }}
           disabled={disabled}
         >
           {selectedOption ? getDisplayValue(selectedOption) : placeholder}
           <ChevronsUpDown className="opacity-50" size={10} />
         </Button>
       </PopoverTrigger>
-      <PopoverContent style={{ width: width }} className={cn("p-0", className)}>
+      <PopoverContent className={cn("p-0", className)}>
         <Command>
           <div className="relative border-b w-full">
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />

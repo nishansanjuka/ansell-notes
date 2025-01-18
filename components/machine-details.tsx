@@ -9,10 +9,15 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Settings, Clock } from "lucide-react";
+import { Calendar, MapPin, Clock, CheckCheck } from "lucide-react";
 import { format } from "date-fns";
+import { AsyncSelect } from "./ui/async-select";
+import { searchSpareParts, SparePart } from "@/lib/actions";
+import { useState } from "react";
+import { ServiceForm } from "./service-form";
 
 interface MachineDetailsProps {
+  id: number;
   machineid: string;
   category: string;
   brand: string;
@@ -24,6 +29,7 @@ interface MachineDetailsProps {
 }
 
 export function MachineDetails({
+  id,
   machineid,
   category,
   brand,
@@ -33,9 +39,32 @@ export function MachineDetails({
   location2,
   updated_at,
 }: MachineDetailsProps) {
+  const [selectedSparePart, setSelectedSparePart] = useState<string>("");
+  const [showServiceForm, setShowServiceForm] = useState(false);
+
+  const handleSparePartQuery = async (query?: string) => {
+    const res = await searchSpareParts(query);
+    if (res.success) {
+      return res.data || [];
+    } else {
+      return [];
+    }
+  };
+
+  const handleSparePart = (value: string) => {
+    setSelectedSparePart(value);
+    handleConfirm();
+  };
+
+  const handleConfirm = () => {
+    if (selectedSparePart.length > 0) {
+      setShowServiceForm(true);
+    }
+  };
+
   return (
-    <div className="mx-auto p-4 max-w-md">
-      <Card className="shadow-lg">
+    <div className="w-full h-screen fixed flex items-center justify-center p-5">
+      <Card className="shadow-lg w-full">
         <CardHeader className="space-y-1 border-b bg-muted/20">
           <div className="flex items-center justify-between">
             <Badge variant="outline" className="text-primary">
@@ -82,47 +111,70 @@ export function MachineDetails({
             </div>
           </div>
 
-          <div className="md:hidden space-y-2">
-            {/* <AsyncSelect
-              fetcher={searchSpareparts}
+          <div className=" space-y-2 w-full">
+            <AsyncSelect<SparePart>
+              triggerClassName="w-full p-1"
+              fetcher={handleSparePartQuery}
               renderOption={(sparePart) => (
-                <div className="flex items-center gap-2">
-                  <div className="flex flex-col">
-                    <div className="font-medium">{sparePart.model}</div>
+                <div className="flex items-center gap-3 p-2">
+                  <div className="flex-1">
+                    <div className="font-medium">{sparePart.sparepart_id}</div>
                     <div className="text-xs text-muted-foreground">
-                      {sparePart.brand}
+                      {sparePart.brand} - {sparePart.model}
                     </div>
+                    <div className="text-xs text-muted-foreground">
+                      Stock: {sparePart.qty} units
+                    </div>
+                  </div>
+                  <div className="text-xs bg-secondary px-2 py-1 rounded-full">
+                    {sparePart.category}
                   </div>
                 </div>
               )}
-              getOptionValue={(user) => user.arrived_date}
-              getDisplayValue={(user) => (
-                <div className="flex items-center gap-2">
-                  <div className="flex flex-col">
-                    <div className="font-medium">{user.brand}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {user.model}
+              getOptionValue={(sparePart) => sparePart.id.toString()}
+              getDisplayValue={(sparePart) => (
+                <div className="flex items-center gap-2 text-left">
+                  <div className="flex leading-tight space-x-2 items-center">
+                    <div className="font-bold text-xs">
+                      {sparePart.sparepart_id}
+                    </div>
+                    <div className="text-xxs text-muted-foreground">
+                      {sparePart.brand} • {sparePart.qty} in stock
                     </div>
                   </div>
                 </div>
               )}
               notFound={
-                <div className="py-6 text-center text-sm">No users found</div>
+                <div className="py-6 text-center text-sm">
+                  No spare parts found
+                </div>
               }
-              label="User"
-              placeholder="Search users..."
-              width="375px"
-            /> */}
+              label="Spare Part"
+              placeholder="Search spare parts..."
+              value={selectedSparePart}
+              onChange={handleSparePart}
+            />
           </div>
         </CardContent>
 
         <CardFooter className="flex flex-col gap-4 pt-4 border-t">
-          <Button className="w-full gap-2">
-            <Settings className="h-4 w-4" />
-            View Machine Details
+          <Button
+            disabled={selectedSparePart.length == 0}
+            onClick={handleConfirm}
+            className="w-full gap-2"
+          >
+            <CheckCheck className="h-4 w-4" />
+            Confirm
           </Button>
         </CardFooter>
       </Card>
+
+      <ServiceForm
+        open={showServiceForm}
+        setOpen={setShowServiceForm}
+        machineId={id}
+        sparePartId={Number(selectedSparePart)}
+      />
     </div>
   );
 }
